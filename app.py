@@ -38,7 +38,7 @@ def process_audio():
     # downloads yt_url to the same directory from which the script runs
     def download_audio(yt_url):
         ydl_opts = {
-            'format': 'worstaudio/worst',
+            'format': 'bestaudio/best',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
