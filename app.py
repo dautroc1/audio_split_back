@@ -110,4 +110,5 @@ def process_audio():
         print("The file does not exist.")
     return {'message': 'URL processed successfully', 'vocal_path': response_dict['vocal_path'], 'instrumental_path': response_dict['instrumental_path'] }, 200
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Use Gunicorn or uWSGI to run the Flask app in production
+    app.run(host='0.0.0.0', port=5000)
