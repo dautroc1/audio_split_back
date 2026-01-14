@@ -1,21 +1,30 @@
-name: Call API Every 5 Minutes
+name: Keep Render Services Alive (Max Uptime)
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # every 5 minutes
-  workflow_dispatch:       # allow manual run
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
 
 jobs:
-  call-api:
+  keep-alive:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - name: Call API 1
+      - name: Ping Render services repeatedly
         run: |
-          curl -X GET https://svgconvert.onrender.com/api/ping
-      - name: Call API 2
-        run: |
-          curl -X GET https://test-gpt-y58q.onrender.com/api/ping
-      - name: Call API 3
-        run: |
-          curl -X GET https://ai-backend-ak38.onrender.com/api/ping
+          SERVICES=(
+            "https://svgconvert.onrender.com/api/ping"
+            "https://test-gpt-y58q.onrender.com/api/ping"
+            "https://ai-backend-ak38.onrender.com/api/ping"
+          )
+
+          for round in {1..4}; do
+            echo "Ping round $round"
+            for url in "${SERVICES[@]}"; do
+              echo "→ $url"
+              curl -s -m 10 "$url" || true
+            done
+            sleep 60
+          done
+
