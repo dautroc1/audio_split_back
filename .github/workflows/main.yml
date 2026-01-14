@@ -16,3 +16,6 @@ jobs:
       - name: Call API 2
         run: |
           curl -X GET https://test-gpt-y58q.onrender.com/api/ping
+      - name: Call API 3
+        run: |
+          curl -X GET https://ai-backend-ak38.onrender.com/api/ping
