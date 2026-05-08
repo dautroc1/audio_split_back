@@ -18,6 +18,7 @@ jobs:
             "https://test-gpt-y58q.onrender.com/api/ping"
             "https://ai-backend-ak38.onrender.com/api/ping"
             "https://law-backend-cqu9.onrender.com/health"
+            "https://law-backend-fix.onrender.com/health"
           )
 
           for round in {1..4}; do
