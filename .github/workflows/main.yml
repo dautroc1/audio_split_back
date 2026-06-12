@@ -19,6 +19,7 @@ jobs:
             "https://ai-backend-ak38.onrender.com/api/ping"
             "https://law-backend-cqu9.onrender.com/health"
             "https://law-backend-fix.onrender.com/health"
+            "https://excel-formula-backend1.onrender.com/health"
           )
 
           for round in {1..4}; do
