@@ -20,6 +20,7 @@ jobs:
             "https://law-backend-cqu9.onrender.com/health"
             "https://law-backend-fix.onrender.com/health"
             "https://excel-formula-backend1.onrender.com/health"
+            "https://paper-summary-neq2.onrender.com/api/health"
           )
 
           for round in {1..4}; do
