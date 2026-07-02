@@ -1,17 +1,14 @@
 name: Keep Render Services Alive (Max Uptime)
-
 on:
   schedule:
     - cron: "*/5 * * * *"
   workflow_dispatch:
-
 jobs:
   keep-alive:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
-      - name: Ping Render services repeatedly
+      - name: Ping Render services (retry only on 503)
         run: |
           SERVICES=(
             "https://svgconvert.onrender.com/api/ping"
@@ -21,14 +18,34 @@ jobs:
             "https://law-backend-fix.onrender.com/health"
             "https://excel-formula-backend1.onrender.com/health"
             "https://paper-summary-neq2.onrender.com/api/health"
+            "https://ping-api.onrender.com/ping-api"
           )
 
-          for round in {1..4}; do
-            echo "Ping round $round"
-            for url in "${SERVICES[@]}"; do
-              echo "→ $url"
-              curl -s -m 10 "$url" || true
-            done
-            sleep 60
-          done
+          ping_service() {
+            local url="$1"
+            local max_attempts=5
+            local attempt=1
 
+            while [ $attempt -le $max_attempts ]; do
+              status=$(curl -s -o /dev/null -w "%{http_code}" -m 15 "$url" || echo "000")
+
+              if [ "$status" = "503" ]; then
+                echo "  ⏳ Attempt $attempt/$max_attempts → $status (waking up), retrying in 15s..."
+                attempt=$((attempt + 1))
+                sleep 15
+                continue
+              fi
+
+              # Any non-503 response (200, 404, timeout, etc.) = done, no retry
+              echo "  ✅ Response: $status"
+              return 0
+            done
+
+            echo "  ❌ Still 503 after $max_attempts attempts, giving up"
+            return 1
+          }
+
+          for url in "${SERVICES[@]}"; do
+            echo "→ $url"
+            ping_service "$url"
+          done
